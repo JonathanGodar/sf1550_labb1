@@ -8,8 +8,8 @@ f_prim = @(x) 2 .* x - 8 - 36 * cos(3 .* x + 1);
 x = [-10:0.1:10];
 
 figure(1)
-grid on
 plot(x, f(x))
+grid on
 
 % Nollstallen:
 % x = 2
@@ -42,6 +42,7 @@ display([guessList(6),output{1},output{2}])
 display(output{3})
 
 %% 1d - konvergensplottar
+% d1
 xStarOut = newton(2,f,f_prim,1e-15);
 xStar = xStarOut{1};
 
@@ -53,46 +54,21 @@ xFix = fixOut{1};
 
 errFix = abs(xFix-xStar);
 errNewt = abs(xNewt-xStar);
-disp(errFix)
-% disp(errNewt)
+xSize = 1:(size(errFix,2));
+figure(2)
+semilogy(xSize,[errNewt, zeros(size(errFix, 2) - size(errNewt, 2), 1)'],xSize,errFix)
+grid on
 
-% figure(2);
 
-% kod...
+%% d2
+% Plotta e_n+1 som funktion av e_n
+figure(3)
+loglog(errNewt(1:end-1), errNewt(2:end), errFix(1:end-1), errFix(2:end))
+grid on
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%function xit = fixpunkt(x0,tau)
 
-%  Indata:
-%
-%  x0  - startgissning (skalär)
-%  tau - feltolerans (skalär)
-%
-%  Utdata:
-%
-%  xit - vektor av alla approximationer xit = [x0,x1,x2,x3,...]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% kod...
-
-%end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% function xit = newton(x0,tau)
-
-%  Indata:
-%
-%  x0  - startgissning (skalär)
-%  tau - feltolerans (skalär)
-%
-%  Utdata:
-%
-%  xit - vektor av alla approximationer xit = [x0,x1,x2,x3,...]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% kod...
 
 % end
 % b
