@@ -24,7 +24,7 @@ tau = 1e-10;
 disp("Fixpunkt med given funtion:")
 guess = guessList(1);
 xit = fixpunkt(guess, tau);
-fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(2:end), guess, size(xit, 2) - 1);
+fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2) - 1);
 disp(abs(diff(xit)))
 
 for guess = guessList(2:end)
@@ -43,12 +43,13 @@ tau = 1e-10;
 disp("Newtons metod: ")
 guess = guessList(1);
 xit = newton(guess, tau);
-fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(2, end), guess, size(xit, 2) - 1);
+fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2) - 1);
 disp(abs(diff(xit)))
 
 for guess = guessList(2:end)
     xit = newton(guess,tau);
     fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2) - 1);
+    
 end
 
 %% 1d - konvergensplottar
@@ -86,6 +87,7 @@ function xit = fixpunkt(x0, tau)
 		x_prev = x;
         x = f_fixpunkt(x);
         xit = [xit, x];
+        
     end
 end
 
@@ -103,5 +105,9 @@ function xit = newton(x0,tau)
         xPrev = x;
         x = x - f(x)/f_prim(x);
         xit = [xit,x];
+        
+        if size(xit, 2) > 4000
+            break
+        end
     end
 end

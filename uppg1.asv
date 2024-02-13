@@ -24,12 +24,15 @@ tau = 1e-10;
 disp("Fixpunkt med given funtion:")
 guess = guessList(1);
 xit = fixpunkt(guess, tau);
-fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2));
+fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(2:end), guess, size(xit, 2) - 1);
 disp(abs(diff(xit)))
 
 for guess = guessList(2:end)
     xit = fixpunkt(guess,tau);
-    fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2));
+    fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2) - 1);
+    if size(xit, 2) > 4000
+        break
+    end
 end
 
 % for guess = guessList(2:end)
@@ -43,12 +46,13 @@ tau = 1e-10;
 disp("Newtons metod: ")
 guess = guessList(1);
 xit = newton(guess, tau);
-fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2));
+fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(2, end), guess, size(xit, 2) - 1);
 disp(abs(diff(xit)))
 
 for guess = guessList(2:end)
     xit = newton(guess,tau);
-    fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2));
+    fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2) - 1);
+    
 end
 
 %% 1d - konvergensplottar
@@ -57,28 +61,26 @@ x0 = 2;
 tau = 1e-10;
 
 x_newton15 = newton(x0,1e-15);
-x_star = x_newton15(end); %size(x_newton15, 2));
-
+x_star = x_newton15(end);
 x_fix = fixpunkt(x0, tau);
 
 err_fix = abs(x_fix-x_star);
 err_newt = abs(x_newton15-x_star);
 x_vals_fix = 1:(size(err_fix,2));
-x_vals_net = 1:(size(err_newt, 2));
+x_vals_newt = 1:(size(err_newt, 2));
 
 figure(2)
-semilogy(x_vals_newt,err_newt,x_vals_fix,errFix)
+semilogy(x_vals_newt,err_newt,x_vals_fix,err_fix)
 grid on
-
 
 %% d2
 % Plotta e_n+1 som funktion av e_n
 figure(3)
-loglog(errNewt(1:end-1), errNewt(2:end), errFix(1:end-1), errFix(2:end))
+loglog(err_newt(1:end-1), err_newt(2:end), err_fix(1:end-1), err_fix(2:end))
 grid on
 
-% end
-% b
+
+%% b
 function xit = fixpunkt(x0, tau)
     f_fixpunkt = @(x) 1/19 * (x^2 + 11 * x - 12 * sin(3 * x + 1)) + 1;
     x = x0;
@@ -105,5 +107,9 @@ function xit = newton(x0,tau)
         xPrev = x;
         x = x - f(x)/f_prim(x);
         xit = [xit,x];
+        
+        if size(xit, 2) > 4000
+            break
+        end
     end
 end
