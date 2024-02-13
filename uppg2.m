@@ -5,7 +5,15 @@ c = [0; -2];
 ra = 1;
 rb = 1.2;
 rc = 1.7;
+%%
+a = [0; 1.5];
+b = [3; 0.5];
+c = [-3; 0.5];
 
+ra = 1;
+rb = 1;
+rc = 1;
+ %% 
 [l, X] = langd(ra, rb, rc, a, b, c);
 
 disp("Längd");
@@ -22,8 +30,34 @@ drawSphere(b, rb);
 drawSphere(c, rc);
 
 %% Experimentell störningsanalys
+err = 1e-2;
+zExpList = [];
+zTrue = langd(ra,rb,rc,a,b,c);
 
 
+% a_ra = [a;ra];
+% b_rb = [b;rb];
+% c_rc = [c;rc];
+
+err_mat = [[ra rb rc]; [a, b, c]];
+
+% err_mat = [a_ra, b_rb, c_rc];
+
+for row = 1:size(err_mat,1)
+    for col = 1:size(err_mat,2)
+        original = err_mat(row,col);
+        err_mat(row, col) = original + err;
+        z_err = langd(err_mat(1, 1), err_mat(1, 2), err_mat(1, 3), err_mat(2:end, 1), err_mat(2:end, 2), err_mat(2:end, 3));
+        err_mat(row,col) = original;
+        zExpList = [zExpList, z_err];
+    end
+end
+
+display(abs(zExpList - zTrue));
+errorZ = sum(abs(zExpList - zTrue));
+
+display(errorZ)
+%%
 % Kod för uppgift 2...
 function [L,X]=langd(ra,rb,rc,a,b,c)
     a_b_guess = get_start_guesses(a, b, c);
