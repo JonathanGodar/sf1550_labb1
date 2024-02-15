@@ -52,7 +52,7 @@ x = linspace(sizeList(1), sizeList(4));
 y = x - x(1) + timeList(1);
 % plot(x,y)
 % loglog(x,x)
-
+%% 
 
 
 %% Tidtabell
@@ -71,6 +71,24 @@ disp(tab);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [jmin,jmax]=kanslighet(A,metod)
+	if metod == 2
+		[L, u, p] = lu(A);
+		A = u;
+	end
+	
+	for nody = 2:2:size(A,1)
+		b = zeros(size(A,1),1);
+		b(nody) = -1;
+
+		if method == 2
+			b = L \ (P*b);
+		end
+		x = A\b;
+
+		x_norm = norm(x);
+		jmin = min(jmin, x_norm);
+		jmax = max(jmax, x_norm);
+end
 
 %  Indata:
 %
@@ -98,3 +116,6 @@ function time = calculationTime(A,iterations)
     time = toc/iterations;
     
 end
+
+
+
