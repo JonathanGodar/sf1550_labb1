@@ -23,28 +23,33 @@ tau = 1e-10;
 
 disp("Fixpunkt med given funtion:")
 guess = guessList(1);
-xit = fixpunkt(guess, tau);
+
+xit = fixpunkt(guess, tau); 
+
 fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2) - 1);
-disp(abs(diff(xit)))
+last_vals = abs(diff(xit));
+disp(last_vals(end-9:end))
+
 
 for guess = guessList(2:end)
     xit = fixpunkt(guess,tau);
-    fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2) - 1);
+
+    if abs(xit(end) - guess) < 1 
+        fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2) - 1);
+    end
 end
-
-% for guess = guessList(2:end)
-%     xit = fixpunkt(guess,tau);
-%     fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2));
-% end
-
+    
 %% 1c - Newton
 tau = 1e-10;
 
 disp("Newtons metod: ")
 guess = guessList(1);
+
 xit = newton(guess, tau);
 fprintf("Hittade rot %f med startgissning: %f och Iterationer %d\n", xit(end), guess, size(xit, 2) - 1);
-disp(abs(diff(xit)))
+last_vals = abs(diff(xit));
+disp(last_vals)
+
 
 for guess = guessList(2:end)
     xit = newton(guess,tau);
@@ -75,6 +80,7 @@ grid on
 figure(3)
 loglog(err_newt(1:end-1), err_newt(2:end), err_fix(1:end-1), err_fix(2:end))
 grid on
+axis equal
 
 
 %% b
@@ -83,7 +89,7 @@ function xit = fixpunkt(x0, tau)
     x = x0;
 	x_prev = x + tau * 10;
     xit = [x0];
-    while abs(x - x_prev) > tau 
+    while abs(x - x_prev) >= tau 
 		x_prev = x;
         x = f_fixpunkt(x);
         xit = [xit, x];

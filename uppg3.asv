@@ -1,15 +1,14 @@
 % Kod för uppgift 3...
 %% a
-load eiffel4.mat
+load eiffel1.mat
 
 trussplot(xnod,ynod,bars);
 hold on
-index = 1;
+index = 100;
 b = zeros(size(A, 2),1);
-b(2*index-1) = 1000;
+b(2*index-1) = 1;
 
 x = A\b;
-
 
 xbel = xnod + x(1:2:end); 
 ybel = ynod + x(2:2:end);
@@ -19,28 +18,28 @@ disp([ybel(index),ybel(index)])
 plot(xnod(index), ynod(index), 'ro', 'MarkerSize', 3)
 plot(xbel(index), ybel(index), 'bo', 'MarkerSize', 3)
 
-
 trussplot(xbel,ybel,bars)
 %%
 load eiffel1.mat
 e1Size = size(A,2);
-e1Time = calculationTime(A,500);
+e1Time = calculationTime(A,750);
 
 load eiffel2.mat
 e2Size = size(A,2);
-e2Time = calculationTime(A,50);
+e2Time = calculationTime(A,500);
 
 load eiffel3.mat
 e3Size = size(A,2);
-e3Time = calculationTime(A,25);
+e3Time = calculationTime(A,50);
 
 load eiffel4.mat
 e4Size = size(A,2);
-e4Time = calculationTime(A,10);
+e4Time = calculationTime(A,20);
 
 sizeList = [e1Size, e2Size, e3Size, e4Size];
 timeList = [e1Time, e2Time, e3Time, e4Time];
 %%
+figure(2)
 loglog(sizeList,timeList)
 grid on
 hold on
@@ -48,12 +47,15 @@ plot(sizeList(1), timeList(1), 'ro', 'MarkerSize', 3)
 plot(sizeList(2), timeList(2), 'ro', 'MarkerSize', 3)
 plot(sizeList(3), timeList(3), 'ro', 'MarkerSize', 3)
 plot(sizeList(4), timeList(4), 'ro', 'MarkerSize', 3)
-x = linspace(sizeList(1), sizeList(4));
-y = x - x(1) + timeList(1);
-% plot(x,y)
-% loglog(x,x)
+
+x = linspace(sizeList(1),sizeList(end),100);
+y1 = x.^3 / sizeList(1)^3 * timeList(1); % +   % timeList(1);
+y2 = x.^2 / sizeList(1)^2 * timeList(1);
+y3 = x.^2.475 / sizeList(1)^2.475 * timeList(1);
+plot(x, y1, x, y2, x, y3)
 %% 
-load eiffel1.mat
+figure(3)
+load eiffel2.mat
 
 tic;
 [jmin, jmax] = kanslighet(A,1);
@@ -73,13 +75,14 @@ plot(xnod(jmin), ynod(jmin), 'ro','MarkerSize', 10)
 %% Tidtabell
 load eiffel1.mat
 timeRow1Colomn1_4 = timeOfDifferentMethodsForGivenTower(A);
-load eiffel1.mat
-timeRow2Colomn1_4 = timeOfDifferentMethodsForGivenTower(A);
-load eiffel1.mat
-timeRow3Colomn1_4 = timeOfDifferentMethodsForGivenTower(A);
 load eiffel2.mat
+timeRow2Colomn1_4 = timeOfDifferentMethodsForGivenTower(A);
+load eiffel3.mat
+timeRow3Colomn1_4 = timeOfDifferentMethodsForGivenTower(A);
+load eiffel4.mat
 timeRow4Colomn1_4 = timeOfDifferentMethodsForGivenTower(A);
-T = [timeRow1Colomn1_4; timeRow2Colomn1_4; timeRow3Colomn1_4; timeRow4Colomn1_4]
+T = [timeRow1Colomn1_4; timeRow2Colomn1_4; timeRow3Colomn1_4; timeRow4Colomn1_4];
+
 % Skapa en 4x4-matris T som innehåller beräkningstiderna.
 % Raderna ska motsvara de olika modellerna (eiffel1-eiffel4) och
 % kolumnerna de olika metoderna, ordnade som "Naiv", "LU",
@@ -90,12 +93,12 @@ T = [timeRow1Colomn1_4; timeRow2Colomn1_4; timeRow3Colomn1_4; timeRow4Colomn1_4]
 
 tab=array2table(T,'VariableNames',{'Naiv' 'LU' 'Gles' 'Gles LU'},'RowNames',{'eiffel1' 'eiffel2' 'eiffel3' 'eiffel4'});
 disp(tab);
-
+writetable(tab,'RythmOfTheNightTime')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [jmin,jmax]=kanslighet(A,metod)
 	if metod == 2
-		[L, U, P] = lu(A);
+		[L, U] = lu(A);
 		A = U;
 	end
 	minValue = inf;
@@ -105,12 +108,12 @@ function [jmin,jmax]=kanslighet(A,metod)
 		b(nody) = -1;
 
 		if metod == 2
-			b = L \ (P*b);
+			b = L \ b;
 		end
 		x = A\b;
 
 		x_norm = norm(x);
-		if x_norm < minValue;
+		if x_norm < minValue
 			minValue = x_norm;
 			jmin = nody/2;
 		end
@@ -124,7 +127,7 @@ end
 
 function time = kanslighetTimed(A,method)
     tic;
-    kanslighet(A,Method);
+    kanslighet(A,method);
     time = toc;
 end
 
